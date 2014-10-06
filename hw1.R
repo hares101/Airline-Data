@@ -42,4 +42,5 @@ table2 =table1[c('ATL', 'ORD', 'DFW','DEN','LAX','IAH','PHX','SFO','CLT','LAS'
          ,'DTW','EWR','MSP','MCO','SLC','JFK','BOS','BWI','LGA','SEA'),
        c('WN','EV','DL','OO','AA','UA','MQ','US','B6','FL')]
 table2
+
 ##mean delay
