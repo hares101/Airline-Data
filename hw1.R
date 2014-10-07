@@ -69,6 +69,14 @@ sec_delay_dec = mean(data[data$MONTH == 12,'SECURITY_DELAY'], na.rm=TRUE)
 late_delay_nov = mean(data[data$MONTH == 11,'LATE_AIRCRAFT_DELAY'], na.rm=TRUE)
 late_delay_dec = mean(data[data$MONTH == 12,'LATE_AIRCRAFT_DELAY'], na.rm=TRUE)
 
+x_nov = list(arr_delay_nov, carrier_delay_nov, dep_delay_nov, weather_delay_nov, nas_delay_nov,sec_delay_nov,late_delay_nov)
+sapply(x_nov, mean)
+
+x_dec = list(arr_delay_dec, carrier_delay_dec, dep_delay_dec, weather_delay_dec, 
+             nas_delay_dec,sec_delay_dec,late_delay_dec)
+
+sapply(x_dec, mean)
+
 arr_delay_dec
 arr_delay_nov
 
@@ -83,3 +91,29 @@ mean_delay_dec
 
 #question 5#
 hist(data[data$MONTH == 11, 'LATE_AIRCRAFT_DELAY'], na.rm=TRUE)
+
+##question 6
+mean(data$ARR_DELAY[data$ORIGIN == 'SFO' & data$UNIQUE_CARRIER == 'UA'
+                    & data$DAY_OF_WEEK == '6'|data$DAY_OF_WEEK=='7'], na.rm=T)
+sd_delay = sd(data$ARR_DELAY[data$ORIGIN == "SFO" & data$UNIQUE_CARRIER == "UA" 
+                    & data$DAY_OF_WEEK == '6'|data$DAY_OF_WEEK=='7'], na.rm=T)
+
+sd_delay
+unique(data$DAY_OF_WEEK)
+
+mean_delay = mean(data$ARR_DELAY[data$ORIGIN == 'SFO' & data$UNIQUE_CARRIER == 'UA'
+                    & data$DAY_OF_WEEK %in% c(6,7)], na.rm=T)
+sd_delay = sd(data$ARR_DELAY[data$ORIGIN == "SFO" & data$UNIQUE_CARRIER == "UA" 
+                  & data$DAY_OF_WEEK %in% c(6,7)], na.rm=T)
+
+#question 7 plot distribution#
+
+names(data)
+axis.default(side=1, labels = (-1:3)
+histogram(~data$ARR_DELAY|months, xlab = "Arrival Delay", main = "Arrival Delay By Month", col = "red", 
+          type = c("percent"), breaks= 7, ylim=c(1, 100))
+months = factor(data$MONTH, levels = c(11,12,1,2), 
+                labels = c("November", "December", "January", "February"))
+unique(data$MONTH)
+
+#question 8 single dot plot#
