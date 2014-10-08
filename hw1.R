@@ -111,9 +111,61 @@ sd_delay = sd(data$ARR_DELAY[data$ORIGIN == "SFO" & data$UNIQUE_CARRIER == "UA"
 names(data)
 axis.default(side=1, labels = (-1:3)
 histogram(~data$ARR_DELAY|months, xlab = "Arrival Delay", main = "Arrival Delay By Month", col = "red", 
-          type = c("percent"), breaks= 7, ylim=c(1, 100))
+          type = c("percent"), ylim=c(1, 100))
 months = factor(data$MONTH, levels = c(11,12,1,2), 
                 labels = c("November", "December", "January", "February"))
 unique(data$MONTH)
+pls
+pls = split(ARR_DELAY, MONTH)
+plot(data$ARR_DELAY, data$MONTH)
+library("lattice")
 
 #question 8 single dot plot#
+
+flights = table(data$ORIGIN)
+flights
+sorted_flights =sort(flights)
+length(sorted_flights)
+newflights = sorted_flights[277:307]
+length(newflights)
+dotchart(newflights, main = "Number of Flights Per Airport", xlab = 'Number of Flights',
+         ylab = 'Airport', col = "blue", cex = .7)
+
+#question 9 more weekend flights?
+
+names(data)
+unique(DAY_OF_WEEK)
+data(data$FL_NUM, )
+weekdays = table(DAY_OF_WEEK %in% c(1:5), data$FL_NUM)
+length(weekdays)
+
+weekdays = (data$FLIGHTS[data$DAY_OF_WEEK %in% c(1:5)])
+length(weekdays)
+weekends = (data$FLIGHTS[data$DAY_OF_WEEK %in% c(6,7)])
+length(weekends)
+unique(data$FLIGHTS)
+
+#question 10 most number of delayed flights
+
+data(data$ARR_DELAY > 0 & data$DAY_OF_WEEK == 1)
+
+length(which(data$ARR_DELAY>0 & data$DAY_OF_WEEK >= 1))
+week_delay = table(data$ARR_DELAY>0, data$DAY_OF_WEEK)
+week_delay
+sum(is.na(week_delay))
+sum(is.na)
+sum(is.na(data$ARR_DELAY))
+sum(is.na(data$DAY_OF_WEEK))
+
+sum(table(data$DAY_OF_WEEK[data$ARR_DELAY >0]))+
+  sum(table(data$DAY_OF_WEEK[data$ARR_DELAY <=0]))+ 
+  sum(is.na(data$ARR_DELAY))
+
+#question 11 largest median overall delay
+
+median_delay = table(data$ARR_DELAY>0, data$DAY_OF_WEEK)
+median_delay
+
+sapply(split_median, median)
+split_median = split(data$ARR_DELAY, data$DAY_OF_WEEK)
+split_median
