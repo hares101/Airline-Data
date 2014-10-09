@@ -165,4 +165,43 @@ sum(table(data$DAY_OF_WEEK[data$ARR_DELAY >0]))+
 
 with(data,tapply(data$ARR_DELAY[ARR_DELAY>0],data$DAY_OF_WEEK[ARR_DELAY>0], quantile, probs = .9, na.rm=TRUE))
 
+tapply(data$ARR_DELAY, data$DAY_OF_WEEK, quantile, probs = .9, na.rm= TRUE)
+tapply(data$ARR_DELAY, data$DAY_OF_WEEK, median, na.rm= TRUE)
+
+#question 12 
+
+  #finding top 10 origin airports
+most_flights1 = sort(table(data$ORIGIN))
+most_flights = most_flights1[c(298:307)]
+most_flights
+names(data)
+split(most_flights, )
+
+
+  #finding top 10 destination airports
+dest_flights1 = sort(table(data$DEST))
+dest_flights= dest_flights1[c(298:307)]
+dest_flights1
+dest_flights
+most_flights
+
+  #solving the problem
+tapply(data$ARR_DELAY[data$ORIGIN %in% c(most_flights, dest_flights)], c(most_flights, dest_flights), median)
+table(data$ARR_DELAY[data$ORIGIN %in% c(most_flights, dest_flights)])
+
 tapply(data$ARR_DELAY[data$ARR_DELAY>0], data$DAY_OF_WEEK[data$ARR_DELAY>0], quantile, probs = .9, na.rm= TRUE)
+
+
+tapply(data$ARR_DELAY)[data$ORIGIN == most_flight $ data$DEST == dest_flights], list(most_flights, dest_flights), median)
+tapply(data$ARR_DELAY)[data$],  median)
+tapply(data$ARR_DELAY[origin & destination], cbind(origin, destination), median)
+
+origin = winterDelays$ORIGIN %in% most_flights
+destination = winterDelays$ORIGIN %in% dest_flights
+
+a= list(most_flights, dest_flights)
+tapply(data$ARR_DELAY[], a, median)
+
+aggregate(data$ARR_DELAY[data$ORIGIN %in% ], a, median)
+
+b = data[data$ARR_DELAY, data$DEST_DELAY, drop = FALSE]
