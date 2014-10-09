@@ -163,9 +163,6 @@ sum(table(data$DAY_OF_WEEK[data$ARR_DELAY >0]))+
 
 #question 11 largest median overall delay
 
-median_delay = table(data$ARR_DELAY>0, data$DAY_OF_WEEK)
-median_delay
+with(data,tapply(data$ARR_DELAY[ARR_DELAY>0],data$DAY_OF_WEEK[ARR_DELAY>0], quantile, probs = .9, na.rm=TRUE))
 
-sapply(split_median, median)
-split_median = split(data$ARR_DELAY, data$DAY_OF_WEEK)
-split_median
+tapply(data$ARR_DELAY[data$ARR_DELAY>0], data$DAY_OF_WEEK[data$ARR_DELAY>0], quantile, probs = .9, na.rm= TRUE)
