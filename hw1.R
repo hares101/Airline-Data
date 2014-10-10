@@ -150,8 +150,12 @@ unique(data$FLIGHTS)
 data(data$ARR_DELAY > 0 & data$DAY_OF_WEEK == 1)
 
 length(which(data$ARR_DELAY>0 & data$DAY_OF_WEEK >= 1))
+
+  #ANSWER
 week_delay = table(data$ARR_DELAY>0, data$DAY_OF_WEEK)
 week_delay
+
+
 sum(is.na(week_delay))
 sum(is.na)
 sum(is.na(data$ARR_DELAY))
@@ -175,7 +179,6 @@ most_flights1 = sort(table(data$ORIGIN))
 most_flights = most_flights1[c(298:307)]
 most_flights
 names(data)
-split(most_flights, )
 
 
   #finding top 10 destination airports
@@ -205,3 +208,57 @@ tapply(data$ARR_DELAY[], a, median)
 aggregate(data$ARR_DELAY[data$ORIGIN %in% ], a, median)
 
 b = data[data$ARR_DELAY, data$DEST_DELAY, drop = FALSE]
+
+#top 10 airports in and outbound
+
+names(data)
+
+head(data$FLIGHTS)
+unique(data$FLIGHTS)
+order(table(data$ORIGIN, data$DEST))
+
+with(TOP10AIRPORTS, aggregate(ARR_DELAY, list(ORIGIN, DEST), median, na.rm = TRUE))
+(tapply(data$ARR_DELAY, list(data$ORIGIN, data$DEST), median, na.rm=TRUE))
+
+merged_tables = most_flights1+ dest_flights1
+most_flights1
+dest_flights1
+merged_tables
+
+new_merged = merged_tables[c(298:307)]
+new_merged
+tapply(data$ARR_DELAY, list(merged_tables), median)
+
+#question 13
+
+head(data$DISTANCE)
+tail(data$DISTANCE)
+max(data$DISTANCE)
+min(data$DISTANCE)
+library("lattice")
+plot = plot(data$DISTANCE, data$ARR_DELAY)
+?cut
+cut1 = cut(data$ARR_DELAY, breaks = seq(-, 1500, by=100))
+cut1
+table(cut1)
+
+newplot = plot(data$DISTANCE, cut1)
+newplot
+
+  #ANSWER
+scatterplot <- smoothScatter(data$DISTANCE, data$ARR_DELAY, bandwidth = c(1:3), nrpoint = 1000, pch= 20, cex = .7,
+              xlab = 'Distance Traveled (In Miles)' , ylab='Delay (In Minutes)', main = 'Delay of Flights by Distance')
+
+#question 14
+
+tail(data$FIRST_DEP_TIME)
+names(data)
+head(data$ARR_TIME)
+length(data$ARR_TIME)
+split(data$ARR_DELAY, data$ARR_TIME)
+table(data$ARR_DELAY, data$ARR_TIME)
+
+smoothScatter(data$ARR_TIME, data$DEP_DELAY, nrpoints= 1000, pch=20, cex=.7,
+              xlab='Departure Time (Military Time)', ylab='Arrival Delay (In Minutes)', main= 'Delay of Flights by Time')
+
+head(data$ARR_TIME_BLK)
