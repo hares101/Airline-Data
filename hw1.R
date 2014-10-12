@@ -74,7 +74,8 @@ sapply(x_nov, mean)
 x_dec = list(arr_delay_dec, carrier_delay_dec, dep_delay_dec, weather_delay_dec, 
              nas_delay_dec,sec_delay_dec,late_delay_dec)
 
-sapply(x_dec, mean)
+sapply(c('DEP_DELAY','ARR_DELAY','CARRIER_DELAY','WEATHER_DELAY',
+         'NAS_DELAY', 'SECURITY_DELAY', 'LATE_AIRCRAFT_DELAY'))
 
 arr_delay_dec
 arr_delay_nov
@@ -284,19 +285,18 @@ library("lattice")
 late_takeoffs = data[data$DEP_DELAY>0 ,]
 dim(late_takeoffs)
   #748292/1961489 flights took off late, or 38.1 percent
-early_takeoffs = data[data$DEP_DELAY<0, ]
-dim(early_takeoffs)
-  #1129185/1961489 took off late, or 57.56 percent
-sum(is.na(data$DEP_DELAY))
- 
+
+dep_delay = prop.table(data$DEP_DELAY[data$DEP_DELAY>0], )
+length(dep_delay)
+
+
 #question 20
 names(data)
+  
   #find flights that had a delay
-late_flights = data[data$ARR_DELAY>0, ]
-late_flights
-length(late_flights)
-dim(late_flights)
-dim(data)
+
+lateflights = prop.table(data$ARR_DELAY[data$ARR_DELAY>0],)
+length(lateflights)
 739696/1961489
   #we find that 739696/1961489 flights took off late, or 37.7 percent
 
@@ -304,3 +304,36 @@ early_flights = data[data$ARR_DELAY<0, ]
 dim(early_flights)
 1212927/1961489
   #we find that 1212927/1961489 arrived early, or.61.8 percent
+
+#question 21
+
+double_delay = data[data$DEP_DELAY>0 & data$ARR_DELAY>0, ]
+dim(double_delay)
+proportion_double_delay = 532192/748292
+proportion_double_delay
+  #532182 of 748292 flights that departed late also arrived late, or 71.1 percent
+
+#question 22
+
+names(data)
+makeup_time = data[data$DEP_DELAY>0, ]
+
+  #finding the mean/median delay of flights that took off late
+mean_dep_delay = mean(data$DEP_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
+mean_dep_delay
+median_dep_delay = median(data$DEP_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
+median_dep_delay
+
+  #finding mean/median arrival delay of flights that took off late
+mean_arr_delay = mean(data$ARR_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
+mean_arr_delay
+
+median_arr_delay = median(data$ARR_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
+median_arr_delay
+
+  #mean arrival delay is 5 minutes less than departure delay for flights that took off late, and 
+  #median arrival delay is 3 minutes less han departure delay,
+  #suggesting that flights that depart late on average do make up time
+
+#question 23
+
