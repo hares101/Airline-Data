@@ -295,15 +295,20 @@ names(data)
   
   #find flights that had a delay
 
-lateflights = prop.table(data$ARR_DELAY[data$ARR_DELAY>0],)
+lateflights = prop.table((data$ARR_DELAY[data$ARR_DELAY>0],)
 length(lateflights)
 739696/1961489
+prop.table(table(data$ARR_DELAY>0))
   #we find that 739696/1961489 flights took off late, or 37.7 percent
 
 early_flights = data[data$ARR_DELAY<0, ]
 dim(early_flights)
 1212927/1961489
+prop.table(table(data$ARR_DELAY<0 ))
+
   #we find that 1212927/1961489 arrived early, or.61.8 percent
+
+
 
 #question 21
 
@@ -312,6 +317,8 @@ dim(double_delay)
 proportion_double_delay = 532192/748292
 proportion_double_delay
   #532182 of 748292 flights that departed late also arrived late, or 71.1 percent
+
+prop.table(table(data$ARR_DELAY[data$DEP_DELAY>0] >0))
 
 #question 22
 
@@ -331,9 +338,41 @@ mean_arr_delay
 median_arr_delay = median(data$ARR_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
 median_arr_delay
 
+sd(data$ARR_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
   #mean arrival delay is 5 minutes less than departure delay for flights that took off late, and 
   #median arrival delay is 3 minutes less han departure delay,
   #suggesting that flights that depart late on average do make up time
 
 #question 23
 
+
+  #finding average speed of flights that were on time or early
+avg_speed = mean(data$DISTANCE[data$DEP_DELAY <=0]/
+                   (data$AIR_TIME[data$DEP_DELAY<=0]/60), na.rm=TRUE)
+avg_speed
+  #finding average speed of flights that were late
+avg_speed_delay = mean(data$DISTANCE[data$DEP_DELAY>0]/
+                         (data$AIR_TIME[data$DEP_DELAY>0]/60), na.rm=TRUE)
+avg_speed_delay
+
+  #doing the same but for median speed
+medianspeed = median(data$DISTANCE[data$DEP_DELAY <=0]/
+       (data$AIR_TIME[data$DEP_DELAY<=0]/60), na.rm=TRUE)
+medianspeed
+
+medianspeed1 = median(data$DISTANCE[data$DEP_DELAY>0]/
+       (data$AIR_TIME[data$DEP_DELAY>0]/60), na.rm=TRUE)
+
+medianspeed1
+
+sapply(data$DISTANCE/(data$AIR_TIME/60), mean)
+
+#question 24
+
+sf_flights = data[data$ORIGIN == 'SFO', ]
+top5 = rownames(sort(table(a$DEST), decreasing = TRUE)[1:5])
+top5
+
+#question 25
+
+data[data$DIST == 'SFO', top5]
