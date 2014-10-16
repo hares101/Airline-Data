@@ -1,0 +1,386 @@
+---
+title: "Homework 1"
+author: "Hares Rahimzei"
+date: "Thursday, October 16, 2014"
+output: pdf_document
+---
+
+```{r}
+load(url("http://eeyore.ucdavis.edu/stat141/Data/winterDelays.rda"))
+data=winterDelays
+```
+
+**1. How many flights are there in the data set?**
+```{r}
+##numbers of flights
+dim(data) 
+```
+    We find that there are 1961489 total flights in the data set.
+      
+**2. Which airline has the most flights?**
+```{r}
+  #sorted the unique carriers
+unique_sorted = data$UNIQUE_CARRIER
+airline = sort(table(data$UNIQUE_CARRIER),decreasing=TRUE)
+  #getting the rownames from our sorted carriers
+airlines = rownames(airline)
+  #finding the airline with the most flights
+most_airline = airlines[1]
+most_airline
+``` 
+    We find that Southwest Airlines has the most flights.
+  
+**3. Compute the number of flights for each originating airport and airline carrier, i.e. a two-way frequency table. Show only the rows and columns for the 20 airports with the largest number of flights, and the 10 airline carriers with the most flights. Show all the computations?**
+```{r}
+  #finding the top 20 airports
+most_flights = sort(table(data$ORIGIN), decreasing=TRUE)
+most_flights_names =rownames(most_flights[1:20])
+most_flights_names
+  #already found sorted airline from the previous question, we just get a vector of the top 10
+airline[1:10]
+  #putting both together in a table
+sorted_table = droplevels(subset(data, ORIGIN %in% most_flights_names
+                                & UNIQUE_CARRIER %in% airlines))
+table(sorted_table$ORIGIN, sorted_table$UNIQUE_CARRIER)
+```
+
+**4. Is the mean delay in November different from the mean delay in December?**
+```{r}
+  #find the mean delay for each month
+arr_delay_nov = mean(data[data$MONTH == 11,'ARR_DELAY'], na.rm=TRUE)
+arr_delay_dec = mean(data[data$MONTH == 12,'ARR_DELAY'], na.rm=TRUE)
+
+arr_delay_dec
+arr_delay_nov
+```
+We find that the mean delay in December is significantly higher than November.
+
+**5. Which is a better measure for characterizing the center of the distribution for overall delay - mean, median or mode? Why?**
+```{r}
+boxplot(data$ARR_DELAY, ylim = c(-20,50), xlab = 'Arrival Delay',
+        ylab='Delay in Minutes', main='Arrival Delay of All Flights'
+        ,col='light green')
+```
+Looking at the boxplot, we see that because we have so many outliers in our data set, using the median to charactertize the center of distribution is the best possible choice.
+
+**6. What is the mean and standard deviation of the arrival delays for all United airlines (UA) flights on the weekend out of SFO?**
+```{r}
+  #we use conditional subsetting to find the arrival delay at the time and place that we specify
+mean_delay =mean(data$ARR_DELAY[data$ORIGIN == 'SFO' & data$UNIQUE_CARRIER == 'UA' & data$DAY_OF_WEEK %in% c(6,7)], na.rm=T)
+
+sd_delay = sd(data$ARR_DELAY[data$ORIGIN == "SFO" & data$UNIQUE_CARRIER == "UA" 
+                             & data$DAY_OF_WEEK %in% c(6,7)], na.rm=T)
+mean_delay
+sd_delay
+```
+
+**7. Plot the distributions of overall delay for each month, i.e. split the data by month and get the ARR_DELAY variable or each. What is the best way to display this?**
+```{r}
+January = data$ARR_DELAY[data$MONTH == 1]
+February =data$ARR_DELAY[data$MONTH == 2]
+November = data$ARR_DELAY[data$MONTH == 11]
+December = data$ARR_DELAY[data$MONTH == 12]
+
+
+boxplot(January, February, November, December,ylim=c(-20,30), horizontal = TRUE, names = c('January','February','November','December'), cex.lab=.7,cex.axis=.5,
+        col=c("light blue","darkgreen","yellow", "red"), xlab='Arrival Delay', ylab= 'Flight Months', 
+        main='Arrival Delay by Months')
+```
+  I plotted all the distributions of delays as boxplots on a single plot, to get an idea of where the median and quartiles of the overall delay lie. I scaled down the axis of my plot to get a better idea of what the box and whiskers look like, as each of the months have outliers going past 1300 minutes of delay.
+  
+**8. Display the number of flights for each airport on a single plot so we can quickly compare them. (Consider a dot plot.)**
+```{r}
+  #sorting the airports so I get the top 30, so my plot won't be too clustered
+flights = table(data$ORIGIN)
+sorted_flights =sort(flights)
+length(sorted_flights)
+newflights = sorted_flights[277:307]
+  #creating a dotchart
+dotchart(newflights, main = "Number of Flights Per Airport", xlab = 'Number of Flights',
+ylab = 'Airport', col = "blue", cex = .5)
+```
+  We see an exponential trend increasing as we get higher up the list of busiest airports.
+
+**9. Are there many more flights on weekdays relative to Saturday and Sunday?**
+```{r}
+  #gives the number of flights per day of the week
+tapply(data$FL_NUM,data$DAY_OF_WEEK,length)
+```
+  The data tells us that Thursday has the most flights, followed by Friday and then Wednesday. We can see that each of the weekdays gets more flights than the weekends.
+  
+**10. What day of the week has the most number of delayed flights?**
+```{r}
+  
+week_delay = table(data$ARR_DELAY>0, data$DAY_OF_WEEK)
+week_delay
+```
+  Our resulting table shows that Thursday has the highest number of "Trues", meaning it has the most arrival delays of the week.
+
+**11. What day of the week has the largest median overall delay? 90th quantile for overall delay?**
+```{r}
+  #using tapply to find the median arrival delay based on the day of the week
+tapply(data$ARR_DELAY, data$DAY_OF_WEEK, median, na.rm= TRUE)
+
+``` 
+  The resulting output shows that Monday, Thursday, and Friday all have equal largest median delays, although they are actually not delays at all, since they are still at negative 4, meaning that the planes got to the destination early.
+  
+```{r}
+  #using the same function except probability instead of median
+tapply(data$ARR_DELAY, data$DAY_OF_WEEK, quantile, probs = .9, na.rm= TRUE)
+
+```
+Largest 90th quantile for delay is Wednesday, with 34 minutes.
+
+**12. Consider the 10 airports with the most number of flights. For this subset of the data, which routes (origin-destination pair) have the worst median delay.**
+
+```{r}
+  #finding the airports with the most ingoing and outgoing flights by sorting each variable, the adding the tables together
+origflights =sort(table(data$ORIGIN))
+destflights = sort(table(data$DEST))
+topflights = destflights + origflights
+#sort topflights to get the top10 airports 
+top10 = sort(topflights, decreasing=TRUE)[1:10]
+#getting just the names of the top 10
+topflights1 = rownames(top10)
+topflights1
+  #subsetting to get the airports inbound and outbound that pertain to our top 10
+subsetflights = data[data$ORIGIN %in% topflights1 |
+                      data$DEST %in% topflights1, ]
+  #finding the median using aggregate function (taken from piazza)
+medianflights = aggregate(subsetflights$ARR_DELAY, list(subsetflights
+                                  $ORIGIN, subsetflights$DEST), median, na.rm=TRUE)
+  #adding names to our columns
+colnames(medianflights) = c('Origin','Destination','Median')
+  #ordering the median by decreasing value
+orderedmedian = medianflights[order(-medianflights$Median),]
+  #using the head function to look at the 6 worst routes in terms of median delay
+head(orderedmedian)
+
+```
+
+**13. Graphically display any relationship between the distance of the flight (between the two origin and destination) airports and the overall delay. Interpret the display.**
+```{r}
+  #using the smooth scatter plot (mentioned by Duncan on Piazza)
+scatterplot = smoothScatter(data$DISTANCE, data$ARR_DELAY, bandwidth = c(1:3), nrpoint = 500, pch= 20, cex = .7, xlab = 'Distance Traveled (In Miles)' , ylab='Delay (In Minutes)', main = 'Delay of Flights by Distance')
+```
+The smooth scatter is useful for figuring out where large clusters of data lie. Large clusters of data are darkened, going from light blue to dark blue to black. From the plot, we can see that a large amount of data lies without distance being less than 1500 miles, but most of the delay at this distance lies near 0. The plot also shows us outliers of very large delays, but the outliers are irrelevant when we want to find a relationship. Looking at this plot, there is no clear relationship between distance travelled and delay experienced.
+
+**14. What are the worst hours to fly in terms of experiencing delays.**
+```{r}
+  #plotting a smoothscatter for a visual representation
+smoothScatter(data$ARR_TIME, data$DEP_DELAY, nrpoints= 1000, pch=20, cex=.7,
+              xlab='Departure Time (Military Time)', ylab='Arrival Delay (In Minutes)', main= 'Delay of Flights by Time')
+```
+The smoothscatter plot tells us most of the delay starts increasing as the afternoon goes on, betweenn 3-8.
+```{r}
+  #using tapply to find the mean delay d
+sort(tapply(data$ARR_DELAY, data$DEP_TIME_BLK, mean,na.rm=TRUE), decreasing=TRUE)[1]
+
+
+```
+The worst time to to fly in terms of experiencing delays is between 6-7.
+```{r}
+sort(tapply(data$ARR_DELAY[data$ARR_DELAY>0], data$DEP_TIME_BLK[data$ARR_DELAY>0], mean,na.rm=TRUE), decreasing=TRUE)[1]
+
+```
+Alternatively, if we run the same tapply function, only condition the statement so that we are getting the worst time when a delay is definitely occuring, it is during the same time block, we just see an increase in mean delay.
+
+**15. Are the delays worse on December 25th than other days? Thanksgiving? Provide evidence to support your conclusions.**
+```{r}
+  #get the arrival delays and dates in a vector
+delay_dates = tapply(data$ARR_DELAY, data$FL_DATE, mean, na.rm=TRUE)
+sorted_delay_dates = sort(delay_dates)
+  #find mean delays around xmas and thanksgiving time
+mean(data$ARR_DELAY, na.rm=TRUE)
+sorted_delay_dates[c('2012-12-24','2012-12-25','2012-12-26')]
+sorted_delay_dates[c('2012-11-22', '2012-11-21','2012-11-23')]
+
+```
+  I solved this problem by looking at the mean arrival delay, and then comparing it to the mean arrival delays around the days surrounding Christmas and Thanksgiving. I found that Christmas and the day after has a mean delay much higher than the overall average. On Thanksgiving however, there are no delays, and the average flight is early to its destination, presumably because most people are with their families that day.
+
+**16. How many missing values are there in each variable?**
+```{r}
+  #this code from piazza
+  #use sapply to find the amount of na's in our dataset using the is.na function
+newNA = sapply(data, function(x) length(x[is.na(x)]))
+newNA
+  #sum the NA's to get the total amount in the dataset
+sum(newNA)
+```
+
+**17. Each of the variables DEP_TIME, DEP_DELAY, DEP_DELAY_NEW have the same number of missing values. Do these missing values correspond to the same records for each of these variables?**
+```{r}
+ #compare first two variables to see if they hold the same NA
+firstNA = is.na(data$DEP_TIME) == is.na(data$DEP_DELAY)
+unique(firstNA)
+  #the only unique value between DEP_TIME and DEP_DELAY is TRUE, meaning that both hold the same amount of NA's
+  #compare the second two variables to see if they also hold same NA
+secondNA = is.na(data$DEP_DELAY) == is.na(data$DEP_DELAY_NEW)
+unique(secondNA)
+  #same result for the second and third delay variables
+```
+  In this case, I found that all NA's held true in the same location for the first and second delay variables, as well as the second and third. By proof of transitivity, we can conclude that A=B, and B=C, so that A=C as well, and all the variables hold the same amount of NA's.
+
+**18. Does the distribution of delays depend on the time of day? Provide evidence for your conclusion.**
+```{r}
+delayplot = sort(tapply(data$ARR_DELAY, data$ARR_TIME_BLK, mean, na.rm=TRUE), decreasing=TRUE)
+barplot(delayplot, ylab = 'Mean Delay Time in Minutes',xlab='Time Block'
+        ,main='Mean Arrival Delay Per Time Block',col='purple')
+```
+I plotted a barplot of the mean delays by time block, and found that the evening times (7-9pm) had the highest mean delays, and the plot suggests that the distribution of delays does depend upon the time one is arriving.
+
+**19. What proportion of flights took off late?**
+```{r}
+late_takeoffs = data[data$DEP_DELAY>0 ,]
+dim(late_takeoffs)
+```
+748292/1961489 flights took off late, or 38.1 percent.
+
+**20. What proportion of flights arrived late? What proportion arrived early?**
+```{r}
+#find flights that had a delay
+late_arr_flights = data[data$ARR_DELAY>0,]
+dim(late_arr_flights)
+739696/1961489
+```
+ We find that 739696/1961489 flights took off late, or 37.7 percent.
+ 
+```{r}
+#finding early flights
+early_flights = data[data$ARR_DELAY<0, ]
+dim(early_flights)
+1212927/1961489
+```
+we find that 1212927/1961489 arrived early, or 61.8 percent.
+
+**21. What proportion of flights that took off late also arrived late?**
+```{r}
+  #finding delay in terms of both arrival and departure
+double_delay = data[data$DEP_DELAY>0 & data$ARR_DELAY>0, ]
+dim(double_delay)
+  #get denominator from previous question
+proportion_double_delay = 532192/748292
+proportion_double_delay
+```
+  532182 of 748292 flights that departed late also arrived late, or 71.1 percent.
+
+**22. Do planes leaving late tend to make up time ?**
+```{r}
+  #finding mean/median departure delay of flights that took off late
+mean_dep_delay = mean(data$DEP_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
+mean_dep_delay
+median_dep_delay = median(data$DEP_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
+median_dep_delay
+
+  #finding mean/median arrival delay of flights that took off late
+mean_arr_delay = mean(data$ARR_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
+mean_arr_delay
+
+median_arr_delay = median(data$ARR_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
+median_arr_delay
+```
+Here, I just compared the mean and median of the departure delay for those flights that had a departure delay >0, and compared it to the arrival delay of the same flights. Theoretically, if a flight had a departure delay>0 it should also have similar arrival delay. If the arrival delay is less than the departure delay that means the flight was able to make up time. I found thatmean arrival delay is 5 minutes less than departure delay for flights that took off late, and median arrival delay is 3 minutes less than departure delay, suggesting that flights that depart late on average do make up time.
+
+**23. Do flights that take off late fly faster to make up time?**
+```{r}
+
+  #finding average speed of flights that were on time or early
+avg_speed = mean(data$DISTANCE[data$DEP_DELAY <=0]/
+                   (data$AIR_TIME[data$DEP_DELAY<=0]/60), na.rm=TRUE)
+avg_speed
+  #finding average speed of flights that were late
+avg_speed_delay = mean(data$DISTANCE[data$DEP_DELAY>0]/
+                         (data$AIR_TIME[data$DEP_DELAY>0]/60), na.rm=TRUE)
+avg_speed_delay
+
+```
+I found that the average speed of flights that had a delay was roughly 10 mph higher than ones that left on time or early.
+```{r}
+  #doing the same but for median speed
+medianspeed = median(data$DISTANCE[data$DEP_DELAY <=0]/
+       (data$AIR_TIME[data$DEP_DELAY<=0]/60), na.rm=TRUE)
+medianspeed
+
+medianspeed_delay = median(data$DISTANCE[data$DEP_DELAY>0]/
+       (data$AIR_TIME[data$DEP_DELAY>0]/60), na.rm=TRUE)
+
+medianspeed_delay
+
+```
+Doing the same for median speed, we find similar results.
+
+**24. For flights originating from SFO, what are the 5 most popular destination airports?**
+```{r}
+  #getting a table of flights where the origin is SFO
+sf_flights = data[data$ORIGIN == 'SFO', ]
+  #sorting the table, getting the top 5, and extracting only the names
+top5_destinations = rownames(sort(table(sf_flights$DEST), decreasing = TRUE)[1:5])
+top5_destinations
+```
+LAX, LAS, JFK, SAN, and ORD are the top destinations of flights departing from SFO.
+
+**25. For flights originating from SFO, compute the distance to the 5 most popular destination airports. How did you do this? Can we do this for all pairs of airports?**
+```{r}
+  #use tapply, and conditioning based on having an origin flight from SFO and the destination flight in our top 5 that we previously found.
+top5_distance = tapply(data$DISTANCE[data$ORIGIN == 'SFO' & data$DEST %in% top5_destinations],droplevels(data$DEST[data$ORIGIN == 'SFO' &data$DEST %in% top5_destinations]), unique, na.rm=TRUE)
+top5_distance
+```
+I used the tapply method, since it is useful for splitting data and then running a function over them. I would be able to do this for all pairs of airports, given that I don't use condition statements like I did in my program. I can then sort the tapply to get the farthest distances from SFO, or any other airport.
+
+**26. For flights from SFO to these 5 most popular destinations, compute and display the distribution of the average speed of the airplane on each flight?**
+```{r}
+  #Since we don't have a column for speed, I make a new column given the other variables I have
+data$speed = (data$DISTANCE/(data$AIR_TIME/60))
+#runs the mean function over the new speed variable, conditioned that our origin flights are from SFO and the destination flights are to our top 5
+meanspeed_topflights = tapply(data$speed[data$ORIGIN=='SFO' & data$DEST %in% top5_destinations], droplevels(data$DEST[data$ORIGIN == 'SFO' & data$DEST %in% top5_destinations]),
+              mean, na.rm=TRUE)
+barplot(meanspeed_topflights, main = 'Average Speed of Flights From SFO', xlab =
+          'Top 5 Destination Flights From SFO', ylab = 'Average Speed in Miles'
+        ,col= 'light blue')
+```
+Looking at the plot, we see that the flights to JFK and Chicago O'Hare fly the fastest, while the other 3 fly at similar speeds. The commuter flights all fly ~380 mph, while the longer, cross country flights fly ~520 mph
+
+**27. Are the distributions of delays for "commuter" flights between SFO and LAX similar to those for SFO to JFK, EWR.**
+```{r}
+  #find the arrival delay of the route between SFO and the commuter LAX
+LAX_route = data$ARR_DELAY[data$ORIGIN %in% c('SFO','LAX') & data$DEST %in% c('LAX','SFO')]
+  #doing the same but for the longer routes
+JFK_route = data$ARR_DELAY[data$ORIGIN %in% c('SFO','JFK') & data$DEST %in% c('JFK','SFO')]
+EWR_route = data$ARR_DELAY[data$ORIGIN %in% c('SFO','EWR') & data$DEST %in% c('EWR','SFO')]
+  #plotting a boxplot to look at where the median and quartiles of the delays are located
+boxplot(LAX_route, JFK_route, EWR_route ,ylim=c(-20,50), horizontal = TRUE, names = c('LAX','JFK','EWR'), cex.lab=.7,cex.axis=.7,
+        col=c("light blue","darkgreen","yellow"), xlab='Arrival Delay', ylab= 'Airport Routes To/From SFO', 
+        main='Arrival Delay of Routes Between SFO')
+```
+The distributions of delay for LAX are very similar to the other two. We do find however, that LAX has a larger median arrival delay, but a smaller maximum. While the other two have smaller delays, but higher maximums. I scaled my axis to get a better look at the boxes, so this plot doesn't give an idea of where the outliers for each route lie.
+
+**28. What other questions could we address with this data?**
+There is a myriad of questions we could address. Here are a few:
+
+Which route has the worst delay?
+Which airport experiences the worst delay?
+Which airport has the worst delay from the time block of 1700-1800?
+What are the most popular routes for flights that span at least 2000 miles?
+
+**29. What other data/variables would allow us to address additional interesting questions?**
+Variables including: The amount of visitors an airport had during the season, the size of the airports, the amount of hangars an airport has.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
