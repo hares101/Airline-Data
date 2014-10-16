@@ -1,44 +1,25 @@
-load(url("http://eeyore.ucdavis.edu/stat141/Data/winterDelays.rda"))
 load("winterDelays.rda")
 names(data)
-x=winterDelays[1:10000, ]
 data=winterDelays
-attach(data)
-data$dep_time
-data$DEP_TIME
-mean(data$DEP_TIME)
-length(data$FIRST_DEP_TIME)
-names(data)
-unique(data$YEAR)
-count(data$DAY_OF_WEEK)
-unique(data$DAY_OF_WEEK)
-data$DAY_OF_WEEK = c(1:7)
-data$DAY_OF_WEEK 
-sum(data$FL_NUM)
-?plot
 ##numbers of flights
 dim(data)
-
+library("rmarkdown")
 ##airline with most flights##
-names(data)
 data$UNIQUE_CARRIER
-air = sort(table(data$UNIQUE_CARRIER),decreasing=TRUE)
-air
-airlines = rownames(air)
-airline = airlines[1:10]
-
+airline = sort(table(data$UNIQUE_CARRIER),decreasing=TRUE)
+airline
+airlines = rownames(airline)
+most_airline = airlines[1]
+most_airline
 ##two way table question 3##
 
-x= sort(table(data$ORIGIN), decreasing=TRUE)
-y =rownames(x[1:20])
-y
+most_flights = sort(table(data$ORIGIN), decreasing=TRUE)
+most_flights_names =rownames(most_flights[1:20])
+most_flights_names
 
 airline
-YES  = data[data$ORIGIN %in% y & data$UNIQUE_CARRIER %in% airlines,]
-tablesubset = droplevels(subset(winterDelays, ORIGIN %in% y & UNIQUE_CARRIER %in% airline))
-
-yes = subset(winterDelays, ORIGIN == 'SFO',]
-yes = winterDelays[winterDelays$ORIGIN %in% x,]
+tablesubset = droplevels(subset(data, ORIGIN %in% most_flights_names
+                                & UNIQUE_CARRIER %in% airlines))
 table(tablesubset$ORIGIN, tablesubset$UNIQUE_CARRIER)
 
 
@@ -46,188 +27,110 @@ table(tablesubset$ORIGIN, tablesubset$UNIQUE_CARRIER)
 
 names(data)
 data$MONTH
-#dep_delay
-dep_delay_nov = mean(data[data$MONTH == 11,'DEP_DELAY'], na.rm=TRUE)
-dep_delay_dec = mean(data[data$MONTH == 12, 'DEP_DELAY'], na.rm=TRUE)
+
 #arr_delay
 arr_delay_nov = mean(data[data$MONTH == 11,'ARR_DELAY'], na.rm=TRUE)
 arr_delay_dec = mean(data[data$MONTH == 12,'ARR_DELAY'], na.rm=TRUE)
-#carrier_delay
-carrier_delay_nov = mean(data[data$MONTH == 11,'CARRIER_DELAY'], na.rm=TRUE)
-carrier_delay_dec = mean(data[data$MONTH == 12,'CARRIER_DELAY'], na.rm=TRUE)
-#weather_delay
-weather_delay_nov = mean(data[data$MONTH == 11,'WEATHER_DELAY'], na.rm=TRUE)
-weather_delay_dec = mean(data[data$MONTH == 12,'WEATHER_DELAY'], na.rm=TRUE)
-#nas_delay
-nas_delay_nov = mean(data[data$MONTH == 11,'NAS_DELAY'], na.rm=TRUE)
-nas_delay_dec = mean(data[data$MONTH == 12,'NAS_DELAY'], na.rm=TRUE)
-#security_delay
-sec_delay_nov = mean(data[data$MONTH == 11,'SECURITY_DELAY'], na.rm=TRUE)
-sec_delay_dec = mean(data[data$MONTH == 12,'SECURITY_DELAY'], na.rm=TRUE)
-#late aircraft delay
-late_delay_nov = mean(data[data$MONTH == 11,'LATE_AIRCRAFT_DELAY'], na.rm=TRUE)
-late_delay_dec = mean(data[data$MONTH == 12,'LATE_AIRCRAFT_DELAY'], na.rm=TRUE)
-
-x_nov = list(arr_delay_nov, carrier_delay_nov, dep_delay_nov, weather_delay_nov, nas_delay_nov,sec_delay_nov,late_delay_nov)
-sapply(x_nov, mean)
-
-x_dec = list(arr_delay_dec, carrier_delay_dec, dep_delay_dec, weather_delay_dec, 
-             nas_delay_dec,sec_delay_dec,late_delay_dec)
-
-sapply(c('DEP_DELAY','ARR_DELAY','CARRIER_DELAY','WEATHER_DELAY',
-         'NAS_DELAY', 'SECURITY_DELAY', 'LATE_AIRCRAFT_DELAY'))
 
 arr_delay_dec
 arr_delay_nov
 
-mean_delay_nov =mean(dep_delay_nov, arr_delay_nov,
-                     carrier_delay_nov, weather_delay_nov,
-                     nas_delay_nov, sec_delay_nov, late_delay_nov)
-mean_delay_dec =mean(dep_delay_dec, arr_delay_dec,
-                     carrier_delay_dec, weather_delay_dec,
-                     nas_delay_dec, sec_delay_dec, late_delay_dec)
-mean_delay_nov
-mean_delay_dec
 
 #question 5#
-hist(data[data$MONTH == 11, 'LATE_AIRCRAFT_DELAY'], na.rm=TRUE)
+boxplot(data$ARR_DELAY, ylim = c(-20,50), xlab = 'Arrival Delay',
+        ylab='Delay in Minutes', main='Arrival Delay of All Flights'
+        ,col='light green')
+  #skewed because outliers, use median
 
 ##question 6
-mean(data$ARR_DELAY[data$ORIGIN == 'SFO' & data$UNIQUE_CARRIER == 'UA'
-                    & data$DAY_OF_WEEK == '6'|data$DAY_OF_WEEK=='7'], na.rm=T)
-sd_delay = sd(data$ARR_DELAY[data$ORIGIN == "SFO" & data$UNIQUE_CARRIER == "UA" 
-                             & data$DAY_OF_WEEK == '6'|data$DAY_OF_WEEK=='7'], na.rm=T)
 
-sd_delay
-unique(data$DAY_OF_WEEK)
 
-mean_delay = mean(data$ARR_DELAY[data$ORIGIN == 'SFO' & data$UNIQUE_CARRIER == 'UA'
+mean_delay =mean(data$ARR_DELAY[data$ORIGIN == 'SFO' & data$UNIQUE_CARRIER == 'UA'
                                  & data$DAY_OF_WEEK %in% c(6,7)], na.rm=T)
 sd_delay = sd(data$ARR_DELAY[data$ORIGIN == "SFO" & data$UNIQUE_CARRIER == "UA" 
                              & data$DAY_OF_WEEK %in% c(6,7)], na.rm=T)
+mean_delay
+sd_delay
 
 #question 7 plot distribution#
 
-names(data)
-axis.default(side=1, labels = (-1:3)
-  ?plot
-  install.packages("lattice")
   library("lattice")
-  densityplot(~data$ARR_DELAY|months, xlab = "Arrival Delay", main = "Arrival Delay By Month", col = "red")
-             months = factor(data$MONTH)
-                             
-                             , levels = c(11,12,1,2), 
-                             labels = c("November", "December", "January", "February"))
-             unique(data$MONTH)
-             pls
-             pls = split(ARR_DELAY, MONTH)
-             plot(data$ARR_DELAY, data$MONTH)
-             library("lattice")
+  
+January = data$ARR_DELAY[data$MONTH == 1]
+February =data$ARR_DELAY[data$MONTH == 2]
+November = data$ARR_DELAY[data$MONTH == 11]
+December = data$ARR_DELAY[data$MONTH == 12]
+
+
+boxplot(January, February, November, December,ylim=c(-20,30), horizontal = TRUE, names = c('January','February','November','December'), cex.lab=.7,cex.axis=.5,
+        col=c("light blue","darkgreen","yellow", "red"), xlab='Arrival Delay', ylab= 'Flight Months', 
+        main='Arrival Delay by Months')
+
+#question 8 single dot plot#
              
-             #question 8 single dot plot#
+flights = table(data$ORIGIN)
+flights
+sorted_flights =sort(flights)
+length(sorted_flights)
+newflights = sorted_flights[277:307]
+length(newflights)
+dotchart(newflights, main = "Number of Flights Per Airport", xlab = 'Number of Flights',
+ylab = 'Airport', col = "blue", cex = .5)
              
-             flights = table(data$ORIGIN)
-             flights
-             sorted_flights =sort(flights)
-             length(sorted_flights)
-             newflights = sorted_flights[277:307]
-             length(newflights)
-             dotchart(newflights, main = "Number of Flights Per Airport", xlab = 'Number of Flights',
-                      ylab = 'Airport', col = "blue", cex = .7)
+#question 9 more weekend flights?
              
-             #question 9 more weekend flights?
+            
+tapply(data$FL_NUM,data$DAY_OF_WEEK,length)
+
              
-             names(data)
-             unique(DAY_OF_WEEK)
-             data(data$FL_NUM, )
-             weekdays = table(DAY_OF_WEEK %in% c(1:5), data$FL_NUM)
-             length(weekdays)
-             
-             weekdays = (data$FLIGHTS[data$DAY_OF_WEEK %in% c(1:5)])
-             length(weekdays)
-             weekends = (data$FLIGHTS[data$DAY_OF_WEEK %in% c(6,7)])
-             length(weekends)
-             unique(data$FLIGHTS)
-             
-             #question 10 most number of delayed flights
-             
-             data(data$ARR_DELAY > 0 & data$DAY_OF_WEEK == 1)
-             
-             length(which(data$ARR_DELAY>0 & data$DAY_OF_WEEK >= 1))
-             
-             #ANSWER
-             week_delay = table(data$ARR_DELAY>0, data$DAY_OF_WEEK)
-             week_delay
+#question 10 most number of delayed flights
              
              
-             sum(is.na(week_delay))
-             sum(is.na)
-             sum(is.na(data$ARR_DELAY))
-             sum(is.na(data$DAY_OF_WEEK))
+#ANSWER
+week_delay = table(data$ARR_DELAY>0, data$DAY_OF_WEEK)
+week_delay
              
-             sum(table(data$DAY_OF_WEEK[data$ARR_DELAY >0]))+
-               sum(table(data$DAY_OF_WEEK[data$ARR_DELAY <=0]))+ 
-               sum(is.na(data$ARR_DELAY))
              
-             #question 11 largest median overall delay
+#question 11 largest median overall delay
              
-             with(data,tapply(data$ARR_DELAY[ARR_DELAY>0],data$DAY_OF_WEEK[ARR_DELAY>0], quantile, probs = .9, na.rm=TRUE))
+            
              
-             tapply(data$ARR_DELAY, data$DAY_OF_WEEK, quantile, probs = .9, na.rm= TRUE)
-             tapply(data$ARR_DELAY, data$DAY_OF_WEEK, median, na.rm= TRUE)
+tapply(data$ARR_DELAY, data$DAY_OF_WEEK, quantile, probs = .9, na.rm= TRUE)
+tapply(data$ARR_DELAY, data$DAY_OF_WEEK, median, na.rm= TRUE)
              
              #question 12 
              
       #finding top 10 airports
-    origflights =sort(table(data$ORIGIN))
+origflights =sort(table(data$ORIGIN))
 destflights = sort(table(data$DEST))  
 destflights
 topflights = destflights + origflights
 topflights 
 top10 = sort(topflights, decreasing=TRUE)[1:10]
 topflights1 = rownames(top10)
+topflights1
 
 subsetflights = data[data$ORIGIN %in% topflights1 |
                       data$DEST %in% topflights1, ]
-medianflights =with(subsetflights, aggregate(ARR_DELAY, list(ORIGIN, DEST), median, na.rm=TRUE))
-colnames(medianflights) = c('Origin','Destination','Median'))
-orderedmedian = medianflights[order(-medianflights$median)]
 
+medianflights = aggregate(subsetflights$ARR_DELAY, list(subsetflights
+                                  $ORIGIN, subsetflights$DEST), median, na.rm=TRUE)
+colnames(medianflights) = c('Origin','Destination','Median')
+orderedmedian = medianflights[order(-medianflights$Median),]
+head(orderedmedian)
 
 #question 13
 
-head(data$DISTANCE)
-tail(data$DISTANCE)
-max(data$DISTANCE)
-min(data$DISTANCE)
-library("lattice")
-plot = plot(data$DISTANCE, data$ARR_DELAY)
-?cut
-cut1 = cut(data$ARR_DELAY, breaks = seq(-, 1500, by=100))
-cut1
-table(cut1)
-
-newplot = plot(data$DISTANCE, cut1)
-newplot
-
 #ANSWER
-scatterplot <- smoothScatter(data$DISTANCE, data$ARR_DELAY, bandwidth = c(1:3), nrpoint = 1000, pch= 20, cex = .7,
+scatterplot <- smoothScatter(data$DISTANCE, data$ARR_DELAY, bandwidth = c(1:3), nrpoint = 500, pch= 20, cex = .7,
                              xlab = 'Distance Traveled (In Miles)' , ylab='Delay (In Minutes)', main = 'Delay of Flights by Distance')
 
 #question 14
 
-tail(data$FIRST_DEP_TIME)
-names(data)
-head(data$ARR_TIME)
-length(data$ARR_TIME)
-split(data$ARR_DELAY, data$ARR_TIME)
-table(data$ARR_DELAY, data$ARR_TIME)
 
 smoothScatter(data$ARR_TIME, data$DEP_DELAY, nrpoints= 1000, pch=20, cex=.7,
               xlab='Departure Time (Military Time)', ylab='Arrival Delay (In Minutes)', main= 'Delay of Flights by Time')
-warnings()
 
-sort(table(data$DEP_TIME_BLK)[], decreasing=TRUE, na.rm=TRUE)
 
   
 sort(tapply(data$ARR_DELAY[data$ARR_DELAY>0], data$DEP_TIME_BLK[data$ARR_DELAY>0], mean,na.rm=TRUE), decreasing=TRUE)[1]
@@ -237,10 +140,6 @@ sort(tapply(data$ARR_DELAY, data$DEP_TIME_BLK, mean,na.rm=TRUE), decreasing=TRUE
 
 #question 15
   
-sort(table(data$DEP_TIME_BLK))
-names(data)
-
-sample(data$FL_DATE, 15)
 
   #get the arrival delays and dates in a vector
 delay_dates = tapply(data$ARR_DELAY, data$FL_DATE, mean, na.rm=TRUE)
@@ -253,14 +152,11 @@ mean(data$ARR_DELAY, na.rm=TRUE)
 #question 16
 
   #finding na's in each variable
-countna1 = length(data$ARR_DELAY)[is.na(data$ARR_DELAY)]
-countna = length(data)[is.na(data)]
-length(countna)
+
   #this code from piazza
 newNA = sapply(data, function(x) length(x[is.na(x)]))
 newNA
 sum(newNA)
-
 #question 17
   
   #compare first two variables to see if they hold the same NA
@@ -274,8 +170,8 @@ unique(secondNA)
 #question 18
   
 delayplot = sort(tapply(data$ARR_DELAY, data$ARR_TIME_BLK, mean, na.rm=TRUE), decreasing=TRUE)
-delayplot
-barplot(delayplot)
+barplot(delayplot, ylab = 'Mean Delay Time in Minutes',xlab='Time Block'
+        ,main='Mean Arrival Delay Per Time Block',col='purple')
 
 barchart(data$ARR_DELAY, data$ARR_TIME_BLK)
 library("lattice")
@@ -286,25 +182,20 @@ late_takeoffs = data[data$DEP_DELAY>0 ,]
 dim(late_takeoffs)
   #748292/1961489 flights took off late, or 38.1 percent
 
-dep_delay = prop.table(data$DEP_DELAY[data$DEP_DELAY>0], )
-length(dep_delay)
-
 
 #question 20
 names(data)
   
   #find flights that had a delay
 
-lateflights = prop.table((data$ARR_DELAY[data$ARR_DELAY>0],)
-length(lateflights)
+lateflights = data[data$ARR_DELAY>0,]
+dim(lateflights)
 739696/1961489
-prop.table(table(data$ARR_DELAY>0))
-  #we find that 739696/1961489 flights took off late, or 37.7 percent
+  #we find that 739696/1961489 flights arrived late, or 37.7 percent
 
 early_flights = data[data$ARR_DELAY<0, ]
 dim(early_flights)
 1212927/1961489
-prop.table(table(data$ARR_DELAY<0 ))
 
   #we find that 1212927/1961489 arrived early, or.61.8 percent
 
@@ -318,7 +209,6 @@ proportion_double_delay = 532192/748292
 proportion_double_delay
   #532182 of 748292 flights that departed late also arrived late, or 71.1 percent
 
-prop.table(table(data$ARR_DELAY[data$DEP_DELAY>0] >0))
 
 #question 22
 
@@ -338,7 +228,6 @@ mean_arr_delay
 median_arr_delay = median(data$ARR_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
 median_arr_delay
 
-sd(data$ARR_DELAY[data$DEP_DELAY>0], na.rm=TRUE)
   #mean arrival delay is 5 minutes less than departure delay for flights that took off late, and 
   #median arrival delay is 3 minutes less han departure delay,
   #suggesting that flights that depart late on average do make up time
@@ -360,19 +249,61 @@ medianspeed = median(data$DISTANCE[data$DEP_DELAY <=0]/
        (data$AIR_TIME[data$DEP_DELAY<=0]/60), na.rm=TRUE)
 medianspeed
 
-medianspeed1 = median(data$DISTANCE[data$DEP_DELAY>0]/
+medianspeed_delay = median(data$DISTANCE[data$DEP_DELAY>0]/
        (data$AIR_TIME[data$DEP_DELAY>0]/60), na.rm=TRUE)
 
-medianspeed1
+medianspeed_delay
 
-sapply(data$DISTANCE/(data$AIR_TIME/60), mean)
 
 #question 24
 
 sf_flights = data[data$ORIGIN == 'SFO', ]
-top5 = rownames(sort(table(a$DEST), decreasing = TRUE)[1:5])
-top5
+top5_destinations = rownames(sort(table(sf_flights$DEST), decreasing = TRUE)[1:5])
+top5_destinations
 
 #question 25
 
-data[data$DIST == 'SFO', top5]
+top5_distance = tapply(data$DISTANCE[data$ORIGIN == 'SFO' & data$DEST %in% top5_destinations],droplevels
+                     (data$DEST[data$ORIGIN == 'SFO' &data$DEST %in% top5_destinations]), unique, na.rm=TRUE)
+top5_distance
+
+#question 26
+
+distance = data$DISTANCE[data$ORIGIN == 'SFO'& data$DEST %in% top5]
+unique(distance)
+
+
+#question 26
+
+data$speed <- (data$DISTANCE/(data$AIR_TIME/60))
+meanspeed1 = tapply(data$speed[data$ORIGIN=='SFO' & data$DEST %in% top5_destinations],
+                    droplevels(data$DEST[data$ORIGIN == 'SFO' & data$DEST %in% top5_destinations]),
+              mean, na.rm=TRUE)
+meanspeed1
+barplot(meanspeed1, main = 'Average Speed of Flights From SFO', xlab =
+          'Top 5 Destination Flights From SFO', ylab = 'Average Speed in Miles'
+        ,col= 'light blue')
+
+#question 27
+
+LAX_route = data$ARR_DELAY[data$ORIGIN %in% c('SFO','LAX') & data$DEST %in% c('LAX','SFO')]
+JFK_route = data$ARR_DELAY[data$ORIGIN %in% c('SFO','JFK') & data$DEST %in% c('JFK','SFO')]
+EWR_route = data$ARR_DELAY[data$ORIGIN %in% c('SFO','EWR') & data$DEST %in% c('EWR','SFO')]
+boxplot(LAX_route, JFK_route, EWR_route ,ylim=c(-20,50), horizontal = TRUE, names = c('LAX','JFK','EWR'), cex.lab=.7,cex.axis=.7,
+        col=c("light blue","darkgreen","yellow"), xlab='Arrival Delay', ylab= 'Airport Routes To/From SFO', 
+        main='Arrival Delay of Routes Between SFO')
+
+**28. What other questions could we address with this data?**
+  There is a myriad of questions we could address. Here are a few:
+  
+  Which route has the worst delay?
+Which airport experiences the worst delay?
+Which airport has the worst delay from the time block of 1700-1800?
+What are the most popular routes for flights that span at least 2000 miles?
+
+**29. What other data/variables would allow us to address additional interesting questions?**
+  Variables including: The amount of visitors an airport had during the season, the size of the airports, the amount of hangars an airport has.
+
+
+
+
